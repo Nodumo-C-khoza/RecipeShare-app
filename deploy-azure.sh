@@ -7,8 +7,8 @@ set -e
 
 # Configuration
 RESOURCE_GROUP="recipeshare-rg"
-APP_NAME="recipeshare-app"
-LOCATION="East US"
+APP_NAME="recipeshare-app-$(date +%s)"
+LOCATION="centralus"
 PLAN_NAME="recipeshare-plan"
 SKU="B1"
 
@@ -26,7 +26,7 @@ az login
 
 # Create resource group
 echo "📦 Creating resource group..."
-az group create --name $RESOURCE_GROUP --location $LOCATION
+az group create --name $RESOURCE_GROUP --location "$LOCATION"
 
 # Create App Service plan
 echo "📋 Creating App Service plan..."
@@ -44,6 +44,9 @@ az webapp create \
     --plan $PLAN_NAME \
     --runtime "DOTNETCORE:8.0"
 
+# Add a delay to allow web app to provision fully
+sleep 30
+
 # Configure app settings
 echo "⚙️ Configuring app settings..."
 az webapp config appsettings set \
@@ -53,14 +56,14 @@ az webapp config appsettings set \
     ASPNETCORE_ENVIRONMENT=Production \
     WEBSITES_ENABLE_APP_SERVICE_STORAGE=false
 
-# Enable continuous deployment from GitHub
-echo "🔗 Setting up GitHub integration..."
-az webapp deployment source config \
-    --name $APP_NAME \
-    --resource-group $RESOURCE_GROUP \
-    --repo-url "https://github.com/Nodumo-C-khoza/RecipeShare-app.git" \
-    --branch main \
-    --manual-integration
+# Enable continuous deployment from GitHub (Manually configure in Azure Portal for first deployment)
+# echo "🔗 Setting up GitHub integration..."
+# az webapp deployment source config \
+#     --name $APP_NAME \
+#     --resource-group $RESOURCE_GROUP \
+#     --repo-url "https://github.com/Nodumo-C-khoza/RecipeShare-app.git" \
+#     --branch main \
+#     --manual-integration
 
 # Get the app URL
 APP_URL=$(az webapp show --name $APP_NAME --resource-group $RESOURCE_GROUP --query defaultHostName --output tsv)
@@ -76,4 +79,4 @@ elif command -v open &> /dev/null; then
     open "https://$APP_URL"
 fi
 
-echo "🎉 RecipeShare App is now live on Azure!" 
+echo "🎉 RecipeShare App is now live on Azure!"

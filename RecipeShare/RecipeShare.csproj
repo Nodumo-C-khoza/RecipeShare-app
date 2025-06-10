@@ -26,6 +26,41 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
     <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.6" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <SpaRoot>../RecipeShareAngularApp/</SpaRoot>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules/**</DefaultItemExcludes>
+    <DotNetPublishRecursive>true</DotNetPublishRecursive>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- This is generally not needed if using SpaServices and copying dist files manually -->
+    <!-- <Content Include="wwwroot**" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" /> -->
+  </ItemGroup>
+
+  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
+    <!-- Ensure Node.js is installed -->
+    <Exec Command="node --version" ContinueOnError="true" />
+    <Exec Command="npm --version" ContinueOnError="true" />
+
+    <Message Importance="high" Text="Restoring dependencies from $(SpaRoot)" />
+    <Exec Command="npm install" WorkingDirectory="$(SpaRoot)" />
+  </Target>
+
+  <Target Name="PublishRunWebpack" AfterTargets="ComputePublishContentAsync">
+    <!-- As part of publishing, ensure the JS app is built and placed in the wwwroot folder -->
+    <Exec Command="npm install" WorkingDirectory="$(SpaRoot)" />
+    <Exec Command="npm run build -- --configuration production" WorkingDirectory="$(SpaRoot)" />
+
+    <ItemGroup>
+      <!-- Only copy the actual build output (dist folder) -->
+      <DistFiles Include="$(SpaRoot)dist/recipeshareangularapp/**" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(DistFiles)" DestinationFolder="wwwroot/%(RecursiveDir)" />
+    <!-- Removed copying of node_modules as it's not needed in wwwroot and can cause path issues -->
+  </Target>
 
 </Project>

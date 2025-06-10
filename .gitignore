@@ -158,3 +158,6 @@ yarn-error.log
 testem.log
 /typings
 
+# Published output
+publish/
+
