@@ -76,7 +76,7 @@ namespace RecipeShare.Services
                 throw new ArgumentException("Invalid dietary tag ID provided");
             }
 
-            // First, get the existing difficulty level
+            // Validate that the difficulty level exists
             var difficultyLevels = await _recipeRepository.GetAvailableDifficultyLevelsAsync();
             var difficultyLevel = difficultyLevels.FirstOrDefault(dl =>
                 dl.Id == viewModel.DifficultyLevelId.Value
@@ -98,7 +98,6 @@ namespace RecipeShare.Services
                 Servings = viewModel.Servings,
                 ImageUrl = viewModel.ImageUrl ?? string.Empty,
                 DifficultyLevelId = viewModel.DifficultyLevelId.Value,
-                DifficultyLevel = difficultyLevel,
                 Ingredients =
                     viewModel
                         .Ingredients?.Select(i => new Ingredient
@@ -110,6 +109,8 @@ namespace RecipeShare.Services
                         .ToList() ?? new List<Ingredient>()
             };
 
+            // For dietary tags, we'll let the repository handle the relationship
+            // by passing the IDs and letting EF Core handle the many-to-many relationship
             if (viewModel.DietaryTagIds?.Any() == true)
             {
                 var existingTags = await _recipeRepository.GetAvailableDietaryTagsAsync();
@@ -154,7 +155,6 @@ namespace RecipeShare.Services
                 Servings = viewModel.Servings,
                 ImageUrl = viewModel.ImageUrl ?? string.Empty,
                 DifficultyLevelId = viewModel.DifficultyLevelId.Value,
-                DifficultyLevel = difficultyLevel,
                 DietaryTags =
                     viewModel.DietaryTagIds?.Select(id => new DietaryTag { Id = id }).ToList()
                     ?? new List<DietaryTag>(),

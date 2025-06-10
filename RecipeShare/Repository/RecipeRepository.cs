@@ -141,8 +141,26 @@ namespace RecipeShare.Repository
         public async Task<Recipe> CreateRecipeAsync(Recipe recipe)
         {
             recipe.CreatedAt = DateTime.UtcNow;
+
+            // Store the dietary tag IDs before clearing the navigation property
+            var dietaryTagIds = recipe.DietaryTags?.Select(dt => dt.Id).ToList() ?? new List<int>();
+
+            // Clear the navigation property to avoid EF trying to insert existing entities
+            recipe.DietaryTags.Clear();
+
             _context.Recipes.Add(recipe);
             await _context.SaveChangesAsync();
+
+            // Now add the dietary tags relationship
+            if (dietaryTagIds.Any())
+            {
+                var dietaryTags = await _context
+                    .DietaryTags.Where(dt => dietaryTagIds.Contains(dt.Id))
+                    .ToListAsync();
+
+                recipe.DietaryTags = dietaryTags;
+                await _context.SaveChangesAsync();
+            }
 
             await _cache.RemoveByPrefixAsync("recipe:list:");
 

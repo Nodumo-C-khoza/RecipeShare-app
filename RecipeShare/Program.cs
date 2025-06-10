@@ -39,8 +39,13 @@ builder.Services.AddCors(options =>
 // Configure EasyCaching
 builder.Services.AddEasyCaching(options =>
 {
-    // Use memory cache
     options.UseInMemory("default");
+});
+
+// Add SPA static files configuration
+builder.Services.AddSpaStaticFiles(configuration =>
+{
+    configuration.RootPath = "../RecipeShareAngularApp/dist";
 });
 
 var app = builder.Build();
@@ -56,20 +61,32 @@ app.UseHttpsRedirection();
 
 // Add Static Files and SPA configuration
 app.UseStaticFiles();
-app.UseSpaStaticFiles(); // Use this if you have a separate folder for SPA static files, configured via services.AddSpaStaticFiles
+app.UseSpaStaticFiles();
 
 app.UseCors("AllowAngularApp");
 app.UseAuthorization();
 
+// Map API controllers first
 app.MapControllers();
 
-// Configure SPA routing
-app.UseSpa(spa =>
-{
-    // In production, the Angular files will be served from this directory
-    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200"); // This is mainly for dev, ensure it's handled in prod correctly
-    spa.Options.SourcePath = "../RecipeShareAngularApp";
-});
+// Configure SPA routing - only for non-API routes
+app.UseWhen(
+    context => !context.Request.Path.StartsWithSegments("/api"),
+    appBuilder =>
+    {
+        appBuilder.UseSpa(spa =>
+        {
+            spa.Options.SourcePath = "../RecipeShareAngularApp";
+
+            if (app.Environment.IsDevelopment())
+            {
+                // In development, proxy to the Angular dev server
+                spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+            }
+            // In production, the Angular files will be served from the configured root path
+        });
+    }
+);
 
 // Ensure database is created and migrations are applied
 using (var scope = app.Services.CreateScope())
