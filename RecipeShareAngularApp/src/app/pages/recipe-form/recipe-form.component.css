@@ -1,0 +1,60 @@
+.recipe-form-card {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 24px 16px;
+}
+
+/* Custom title styling - less bold, more elegant */
+mat-card-title {
+  font-weight: 400 !important;
+  font-size: 1.5rem !important;
+  color: #424242 !important;
+  letter-spacing: 0.5px;
+}
+
+.form-field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.ingredients-section {
+  margin-bottom: 20px;
+}
+
+.ingredients-section h3 {
+  margin: 0 0 16px 0;
+  color: #424242;
+  font-size: 1.2rem;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
+.ingredients-list {
+  margin-bottom: 16px;
+}
+
+.ingredient-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.ingredient-field {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.ingredient-field:first-child {
+  flex: 0.5;
+}
+
+.ingredient-field:nth-child(2) {
+  flex: 0.5;
+}

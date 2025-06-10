@@ -1,0 +1,94 @@
+<div class="container">
+  <div *ngIf="loading" class="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading" class="recipe-form">
+    <mat-card class="recipe-form-card">
+      <mat-card-title>{{ isEditMode ? 'Edit Recipe' : 'Create Recipe' }}</mat-card-title>
+      <mat-card-content>
+        <form (ngSubmit)="onSubmit()" #recipeForm="ngForm">
+          <div *ngIf="recipe">
+            <mat-form-field appearance="fill" class="form-field">
+              <mat-label>Title</mat-label>
+              <input matInput type="text" [(ngModel)]="recipe!.title" name="title" required>
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="form-field">
+              <mat-label>Description</mat-label>
+              <textarea matInput [(ngModel)]="recipe!.description" name="description" required></textarea>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="form-field">
+              <mat-label>Instructions</mat-label>
+              <textarea matInput [(ngModel)]="recipe!.instructions" name="instructions" required></textarea>
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="form-field">
+              <mat-label>Prep Time (minutes)</mat-label>
+              <input matInput type="number" [(ngModel)]="recipe!.prepTimeMinutes" name="prepTimeMinutes" required>
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="form-field">
+              <mat-label>Cook Time (minutes)</mat-label>
+              <input matInput type="number" [(ngModel)]="recipe!.cookTimeMinutes" name="cookTimeMinutes" required>
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="form-field">
+              <mat-label>Servings</mat-label>
+              <input matInput type="number" [(ngModel)]="recipe!.servings" name="servings" required>
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="form-field">
+              <mat-label>Image URL</mat-label>
+              <input matInput type="text" [(ngModel)]="recipe!.imageUrl" name="imageUrl" required>
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="form-field">
+              <mat-label>Difficulty Level</mat-label>
+              <mat-select [(ngModel)]="recipe!.difficultyLevel" name="difficultyLevel" required>
+                <mat-option *ngFor="let level of difficultyLevels" [value]="level">
+                  {{level}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="form-field">
+              <mat-label>Dietary Tags</mat-label>
+              <mat-select [(ngModel)]="recipe!.dietaryTags" name="dietaryTags" multiple>
+                <mat-option *ngFor="let tag of dietaryTags" [value]="tag.name">
+                  {{tag.displayName}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="ingredients-section">
+              <h3>Ingredients</h3>
+              <div class="ingredients-list">
+                <div *ngFor="let ingredient of recipe!.ingredients; let i = index" class="ingredient-item">
+                  <mat-form-field appearance="fill" class="ingredient-field">
+                    <mat-label>Amount</mat-label>
+                    <input matInput [(ngModel)]="ingredient.amount" [name]="'amount' + i" required>
+                  </mat-form-field>
+                  <mat-form-field appearance="fill" class="ingredient-field">
+                    <mat-label>Unit</mat-label>
+                    <input matInput [(ngModel)]="ingredient.unit" [name]="'unit' + i" required>
+                  </mat-form-field>
+                  <mat-form-field appearance="fill" class="ingredient-field">
+                    <mat-label>Name</mat-label>
+                    <input matInput [(ngModel)]="ingredient.name" [name]="'name' + i" required>
+                  </mat-form-field>
+                  <button mat-icon-button color="warn" type="button" (click)="removeIngredient(i)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+              <button mat-raised-button color="primary" type="button" (click)="addIngredient()">
+                <mat-icon>add</mat-icon>
+                Add Ingredient
+              </button>
+            </div>
+            <div class="form-actions">
+              <button mat-raised-button color="primary" type="submit">{{ isEditMode ? 'Update' : 'Create' }} Recipe</button>
+              &nbsp;&nbsp;
+              <button mat-raised-button color="warn" (click)="router.navigate(['/recipes'])">Cancel</button>
+            </div>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+

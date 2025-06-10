@@ -1,0 +1,127 @@
+<div class="container mt-4">
+  <div *ngIf="loading" class="spinner">
+    <mat-progress-spinner
+      mode="indeterminate"
+      class="spinner"
+      color="primary">
+    </mat-progress-spinner>
+  </div>
+
+  <div class="container mt-4" *ngIf="!loading">
+    <div class="header-section">
+      <h2 class="mat-headline">Recipes</h2>
+      <button mat-raised-button color="primary" (click)="navigateToNewRecipe()">
+        <mat-icon>add</mat-icon>
+        New Recipe
+      </button>
+    </div>
+
+    <mat-card appearance="outlined" class="filter-card">
+      <mat-card-header>
+        <mat-card-title>Filter Recipes</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="filter-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Search</mat-label>
+            <input matInput [(ngModel)]="searchQuery" (keyup)="applyFilter()" placeholder="Search recipes...">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Filter by Tag</mat-label>
+            <mat-select [(ngModel)]="filterTag" (selectionChange)="applyFilter()">
+              <mat-option value="">All Tags</mat-option>
+              <mat-option *ngFor="let tag of dietaryTags" [value]="tag.name">
+                {{tag.displayName}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Maximum Time (minutes)</mat-label>
+            <input matInput type="number" [(ngModel)]="filterMaxTime" (change)="applyFilter()">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Difficulty Level</mat-label>
+            <mat-select [(ngModel)]="filterDifficulty" (selectionChange)="applyFilter()">
+              <mat-option value="">All Levels</mat-option>
+              <mat-option *ngFor="let level of difficultyLevels" [value]="level">
+                {{level}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="filter-list">
+            <mat-checkbox [(ngModel)]="filterQuickRecipes" (change)="applyFilter()">
+              Quick Recipes
+            </mat-checkbox>
+            <button mat-button color="warn" (click)="resetFilter()">
+              <mat-icon>clear</mat-icon>
+              Reset Filters
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="big-card">
+      <mat-card-content>
+        <div class="cards-container">
+          <div *ngIf="dataSource.data.length === 0 && !loading" class="no-recipes-message">
+            <mat-icon>restaurant</mat-icon>
+            <h3>No recipes found</h3>
+            <p>Try adjusting your filters or search criteria.</p>
+          </div>
+
+          <mat-card *ngFor="let recipe of dataSource.data" class="example-card" appearance="outlined">
+            <img mat-card-image [src]="recipe.imageUrl" [alt]="recipe.title" *ngIf="recipe.imageUrl" class="recipe-image" />
+            <div class="no-image" *ngIf="!recipe.imageUrl">
+              <mat-icon>image</mat-icon>
+            </div>
+            <mat-card-header>
+              <mat-card-title>{{ recipe.title }}</mat-card-title>
+              <mat-card-subtitle>
+                <div>Difficulty: {{ recipe.difficultyLevel }}</div>
+                <div>Prep: {{ recipe.prepTimeMinutes }}min | Cook: {{ recipe.cookTimeMinutes }}min</div>
+              </mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <p>{{ recipe.description }}</p>
+              <div class="tags" *ngIf="recipe.dietaryTags?.length">
+                <mat-chip *ngFor="let tag of recipe.dietaryTags" color="primary" selected>
+                  {{ getTagDisplayName(tag) }}
+                </mat-chip>
+              </div>
+            </mat-card-content>
+
+            <mat-card-actions>
+              <button mat-button color="primary" [routerLink]="['/recipes', recipe.id]">
+                <mat-icon>visibility</mat-icon>
+                View
+              </button>
+              <button mat-button color="accent" [routerLink]="['/recipes/edit', recipe.id]">
+                <mat-icon>edit</mat-icon>
+                Edit
+              </button>
+              <button mat-button color="warn" (click)="deleteRecipe(recipe.id)">
+                <mat-icon>delete</mat-icon>
+                Delete
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </mat-card-content>
+      <mat-card-footer>
+        <mat-paginator
+          [length]="totalItems"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[20, 50, 100, 150]"
+          (page)="onPageChange($event)">
+        </mat-paginator>
+      </mat-card-footer>
+    </mat-card>
+  </div>
+</div>

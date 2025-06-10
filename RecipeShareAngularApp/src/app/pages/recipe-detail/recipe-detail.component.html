@@ -1,0 +1,95 @@
+<div class="container">
+  <div *ngIf="loading" class="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <div *ngIf="recipe && !loading" class="recipe-detail">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>{{ recipe.title }}</mat-card-title>
+        <div class="spacer"></div>
+        <div class="actions">
+          <button mat-icon-button color="primary" [routerLink]="['/recipes/edit', recipe.id]">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteRecipe()">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </mat-card-header>
+
+      <img mat-card-image [src]="recipe.imageUrl" [alt]="recipe.title" class="recipe-image">
+
+      <mat-card-content>
+        <div class="recipe-info">
+          <div class="info-item">
+            <mat-icon>schedule</mat-icon>
+            <span>Prep: {{ recipe.prepTimeMinutes }} min | Cook: {{ recipe.cookTimeMinutes }} min</span>
+          </div>
+          <div class="info-item">
+            <mat-icon>restaurant</mat-icon>
+            <span>{{ recipe.servings }} servings</span>
+          </div>
+          <div class="info-item">
+            <mat-icon>fitness_center</mat-icon>
+            <span>{{ recipe.difficultyLevel }}</span>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="section">
+          <h3>Description</h3>
+          <p>{{ recipe.description }}</p>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="section">
+          <h3>Ingredients</h3>
+          <mat-chip-set>
+            <mat-chip *ngFor="let ingredient of recipe.ingredients">
+              {{ ingredient.amount }} {{ ingredient.unit }} {{ ingredient.name }}
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="section">
+          <h3>Instructions</h3>
+          <p>{{ recipe.instructions }}</p>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="section" *ngIf="recipe.dietaryTags && recipe.dietaryTags.length > 0">
+          <h3>Dietary Tags</h3>
+          <mat-chip-set>
+            <mat-chip *ngFor="let tag of recipe.dietaryTags">
+              {{ tag }}
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="metadata">
+          <p>Created: {{ recipe.createdAt | date:'medium' }}</p>
+          <p *ngIf="recipe.updatedAt">Last updated: {{ recipe.updatedAt | date:'medium' }}</p>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+          Back to List
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
