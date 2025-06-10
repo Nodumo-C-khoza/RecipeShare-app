@@ -40,7 +40,13 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Maximum Time (minutes)</mat-label>
-            <input matInput type="number" [(ngModel)]="filterMaxTime" (change)="applyFilter()">
+            <input matInput 
+                   type="number" 
+                   [(ngModel)]="filterMaxTime" 
+                   (ngModelChange)="applyFilter()"
+                   min="1"
+                   max="480"
+                   placeholder="Enter max time in minutes">
           </mat-form-field>
 
           <mat-form-field appearance="outline">

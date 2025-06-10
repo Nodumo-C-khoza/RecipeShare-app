@@ -57,7 +57,6 @@ export class RecipeService {
   }
 
   createRecipe(recipe: CreateRecipe): Observable<Recipe> {
-    console.log('Creating recipe:', recipe);
     return this.http.post<Recipe>(`${this.apiUrl}/CreateRecipe`, recipe).pipe(
       tap(response => console.log('Recipe created successfully:', response)),
       catchError(error => {
@@ -68,7 +67,6 @@ export class RecipeService {
   }
 
   updateRecipe(id: number, recipe: CreateRecipe): Observable<Recipe> {
-    console.log(`Updating recipe ${id}:`, recipe);
     return this.http.put<Recipe>(`${this.apiUrl}/UpdateRecipe/${id}`, recipe).pipe(
       tap(response => console.log('Recipe updated successfully:', response)),
       catchError(error => {

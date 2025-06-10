@@ -35,7 +35,18 @@ namespace RecipeShare.Repository
             bool quickRecipes = false
         )
         {
-            var cacheKey = string.Format(RecipeListCacheKey, pageNumber, pageSize);
+            // Create a cache key that includes all filter parameters
+            var filterParams = new[]
+            {
+                pageNumber.ToString(),
+                pageSize.ToString(),
+                searchQuery ?? "null",
+                tag ?? "null",
+                difficulty ?? "null",
+                maxTime?.ToString() ?? "null",
+                quickRecipes.ToString()
+            };
+            var cacheKey = $"recipe:list:{string.Join(":", filterParams)}";
 
             var cacheValue = await _cache.GetAsync<(IEnumerable<Recipe>, int)>(cacheKey);
             if (cacheValue.HasValue)
@@ -44,7 +55,8 @@ namespace RecipeShare.Repository
             }
 
             var query = _context
-                .Recipes.Include(r => r.Ingredients)
+                .Recipes.AsNoTracking()
+                .Include(r => r.Ingredients)
                 .Include(r => r.DifficultyLevel)
                 .Include(r => r.DietaryTags)
                 .AsQueryable();
@@ -68,7 +80,7 @@ namespace RecipeShare.Repository
 
             if (maxTime.HasValue)
             {
-                query = query.Where(r => (r.PrepTimeMinutes + r.CookTimeMinutes) <= maxTime.Value);
+                query = query.Where(r => (r.PrepTimeMinutes + r.CookTimeMinutes) == maxTime.Value);
             }
 
             if (quickRecipes)
@@ -118,7 +130,8 @@ namespace RecipeShare.Repository
         public async Task<IEnumerable<Recipe>> GetRecipesByDietaryTagAsync(string tag)
         {
             return await _context
-                .Recipes.Include(r => r.Ingredients)
+                .Recipes.AsNoTracking()
+                .Include(r => r.Ingredients)
                 .Include(r => r.DifficultyLevel)
                 .Include(r => r.DietaryTags)
                 .Where(r => r.DietaryTags.Any(dt => dt.Name == tag))
@@ -193,7 +206,8 @@ namespace RecipeShare.Repository
         public async Task<IEnumerable<Recipe>> GetRecipesByTotalTimeAsync(int maxMinutes)
         {
             return await _context
-                .Recipes.Include(r => r.Ingredients)
+                .Recipes.AsNoTracking()
+                .Include(r => r.Ingredients)
                 .Include(r => r.DifficultyLevel)
                 .Include(r => r.DietaryTags)
                 .Where(r => r.PrepTimeMinutes + r.CookTimeMinutes <= maxMinutes)
@@ -205,7 +219,8 @@ namespace RecipeShare.Repository
         )
         {
             return await _context
-                .Recipes.Include(r => r.Ingredients)
+                .Recipes.AsNoTracking()
+                .Include(r => r.Ingredients)
                 .Include(r => r.DifficultyLevel)
                 .Include(r => r.DietaryTags)
                 .Where(r => r.DifficultyLevel.Name == difficultyLevel)
@@ -215,7 +230,8 @@ namespace RecipeShare.Repository
         public async Task<IEnumerable<Recipe>> GetQuickRecipesAsync(int maxMinutes = 30)
         {
             return await _context
-                .Recipes.Include(r => r.Ingredients)
+                .Recipes.AsNoTracking()
+                .Include(r => r.Ingredients)
                 .Include(r => r.DifficultyLevel)
                 .Include(r => r.DietaryTags)
                 .Where(r => r.PrepTimeMinutes + r.CookTimeMinutes <= maxMinutes)
@@ -230,7 +246,8 @@ namespace RecipeShare.Repository
             var normalizedIngredients = ingredients.Select(i => i.ToLower().Trim()).ToList();
 
             var query = _context
-                .Recipes.Include(r => r.Ingredients)
+                .Recipes.AsNoTracking()
+                .Include(r => r.Ingredients)
                 .Include(r => r.DifficultyLevel)
                 .Include(r => r.DietaryTags)
                 .AsQueryable();
@@ -260,12 +277,15 @@ namespace RecipeShare.Repository
 
         public async Task<IEnumerable<DietaryTag>> GetAvailableDietaryTagsAsync()
         {
-            return await _context.DietaryTags.OrderBy(t => t.Name).ToListAsync();
+            return await _context.DietaryTags.AsNoTracking().OrderBy(t => t.Name).ToListAsync();
         }
 
         public async Task<IEnumerable<DifficultyLevel>> GetAvailableDifficultyLevelsAsync()
         {
-            return await _context.DifficultyLevels.OrderBy(l => l.Name).ToListAsync();
+            return await _context
+                .DifficultyLevels.AsNoTracking()
+                .OrderBy(l => l.Name)
+                .ToListAsync();
         }
     }
 }

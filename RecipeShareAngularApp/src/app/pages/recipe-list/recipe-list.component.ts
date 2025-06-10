@@ -132,7 +132,7 @@ export class RecipeListComponent implements OnInit, OnDestroy {
   loadRecipes(): void {
     this.loading = true;
     this.recipeService.getRecipes(
-      this.currentPage + 1, 
+      this.currentPage + 1,
       this.pageSize,
       this.searchQuery,
       this.filterTag,
@@ -166,13 +166,11 @@ export class RecipeListComponent implements OnInit, OnDestroy {
   }
 
   applyFilter(): void {
-    // Reset to first page when applying filters
     this.currentPage = 0;
     if (this.paginator) {
       this.paginator.firstPage();
     }
-    
-    // Reload recipes from server with current filters
+
     this.loadRecipes();
   }
 

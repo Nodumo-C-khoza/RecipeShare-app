@@ -5,7 +5,6 @@ using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Loggers;
-using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 using RecipeShare.Controllers;
 using RecipeShare.Models;
@@ -16,7 +15,7 @@ namespace RecipeShareBenchmarks
     [MemoryDiagnoser]
     public class RecipeApiBenchmarks
     {
-        private HttpClient _client;
+        private HttpClient? _client;
         public const string BaseUrl = "http://localhost:5229"; // Update this to match your API's URL
 
         [GlobalSetup]
@@ -31,7 +30,7 @@ namespace RecipeShareBenchmarks
             _client = new HttpClient(handler)
             {
                 BaseAddress = new Uri(BaseUrl),
-                Timeout = TimeSpan.FromSeconds(30) // Add timeout
+                Timeout = TimeSpan.FromSeconds(30)
             };
         }
 
@@ -42,9 +41,7 @@ namespace RecipeShareBenchmarks
         }
 
         [Benchmark]
-        [Arguments(100)]
         [Arguments(500)]
-        [Arguments(1000)]
         [BenchmarkCategory("Sequential")]
         public async Task GetRecipes_Sequential(int callCount)
         {
@@ -55,7 +52,7 @@ namespace RecipeShareBenchmarks
             {
                 try
                 {
-                    var response = await _client.GetAsync("/api/recipes/getrecipes");
+                    var response = await _client!.GetAsync("/api/recipes/getrecipes");
                     response.EnsureSuccessStatusCode();
                     var result = await response.Content.ReadFromJsonAsync<
                         PaginatedResult<RecipeListViewModel>
@@ -80,78 +77,8 @@ namespace RecipeShareBenchmarks
             }
 
             Console.WriteLine(
-                $"Completed {callCount} calls: {successCount} successful, {errorCount} errors"
+                $"Completed {callCount} sequential calls: {successCount} successful, {errorCount} errors"
             );
-        }
-
-        [Benchmark]
-        [Arguments(100)]
-        [Arguments(500)]
-        [BenchmarkCategory("Parallel")]
-        public async Task GetRecipes_Parallel(int callCount)
-        {
-            var tasks = new List<Task<bool>>();
-            var semaphore = new SemaphoreSlim(50, 50); // Limit concurrent requests
-
-            for (int i = 0; i < callCount; i++)
-            {
-                tasks.Add(MakeRequest(i, semaphore));
-            }
-
-            var results = await Task.WhenAll(tasks);
-            var successCount = results.Count(r => r);
-            var errorCount = results.Count(r => !r);
-
-            Console.WriteLine(
-                $"Parallel {callCount} calls: {successCount} successful, {errorCount} errors"
-            );
-        }
-
-        private async Task<bool> MakeRequest(int iteration, SemaphoreSlim semaphore)
-        {
-            await semaphore.WaitAsync();
-            try
-            {
-                var response = await _client.GetAsync("/api/recipes/getrecipes");
-                response.EnsureSuccessStatusCode();
-
-                var result = await response.Content.ReadFromJsonAsync<
-                    PaginatedResult<RecipeListViewModel>
-                >();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error in parallel iteration {iteration}: {ex.Message}");
-                return false;
-            }
-            finally
-            {
-                semaphore.Release();
-            }
-        }
-
-        [Benchmark]
-        [BenchmarkCategory("Single Call")]
-        public async Task GetRecipes_Single_Call()
-        {
-            var response = await _client.GetAsync("/api/recipes/getrecipes");
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<
-                PaginatedResult<RecipeListViewModel>
-            >();
-        }
-
-        [Benchmark]
-        [BenchmarkCategory("With Parameters")]
-        public async Task GetRecipes_With_Parameters()
-        {
-            // Test with query parameters if your API supports them
-            var response = await _client.GetAsync("/api/recipes/getrecipes?page=1&pageSize=10");
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<
-                PaginatedResult<RecipeListViewModel>
-            >();
         }
     }
 
@@ -161,7 +88,6 @@ namespace RecipeShareBenchmarks
         {
             // Use default configuration
             AddJob(Job.Default);
-
             // Add useful columns
             AddColumn(StatisticColumn.Mean);
             AddColumn(StatisticColumn.StdDev);
@@ -169,7 +95,7 @@ namespace RecipeShareBenchmarks
             AddColumn(StatisticColumn.Max);
             AddColumn(StatisticColumn.P95);
             AddColumn(StatisticColumn.OperationsPerSecond);
-            AddColumn(TargetMethodColumn.Method); // Updated to use TargetMethodColumn
+            AddColumn(TargetMethodColumn.Method);
 
             // Add exporters for results
             AddExporter(MarkdownExporter.GitHub);
