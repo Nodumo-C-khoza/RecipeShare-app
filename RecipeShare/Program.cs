@@ -53,10 +53,23 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Add Static Files and SPA configuration
+app.UseStaticFiles();
+app.UseSpaStaticFiles(); // Use this if you have a separate folder for SPA static files, configured via services.AddSpaStaticFiles
+
 app.UseCors("AllowAngularApp");
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Configure SPA routing
+app.UseSpa(spa =>
+{
+    // In production, the Angular files will be served from this directory
+    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200"); // This is mainly for dev, ensure it's handled in prod correctly
+    spa.Options.SourcePath = "../RecipeShareAngularApp";
+});
 
 // Ensure database is created and migrations are applied
 using (var scope = app.Services.CreateScope())
