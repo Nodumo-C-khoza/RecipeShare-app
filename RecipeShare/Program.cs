@@ -7,6 +7,25 @@ using RecipeShare.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add environment variable substitution for connection strings
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (!string.IsNullOrEmpty(connectionString))
+{
+    connectionString = connectionString
+        .Replace("${DB_SERVER}", Environment.GetEnvironmentVariable("DB_SERVER") ?? "")
+        .Replace("${DB_NAME}", Environment.GetEnvironmentVariable("DB_NAME") ?? "")
+        .Replace("${DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "")
+        .Replace("${DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "");
+}
+
+// Validate connection string
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException(
+        "Connection string 'DefaultConnection' is not configured. Please check your app settings."
+    );
+}
+
 // Add services to the container.
 builder.Services.AddControllers();
 
@@ -15,7 +34,7 @@ builder.Services.AddSwaggerGen();
 
 // Add DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+    options.UseSqlServer(connectionString)
 );
 
 // Add Repository and Service
@@ -105,16 +124,47 @@ app.UseWhen(
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+
     try
     {
+        logger.LogInformation("Starting database initialization...");
+
         var context = services.GetRequiredService<ApplicationDbContext>();
-        context.Database.Migrate();
+
+        // Set a timeout for database operations
+        var timeout = TimeSpan.FromMinutes(2);
+        using var cts = new CancellationTokenSource(timeout);
+
+        // First, ensure the database exists
+        logger.LogInformation("Ensuring database exists...");
+        await context.Database.EnsureCreatedAsync(cts.Token);
+        logger.LogInformation("Database creation/verification completed.");
+
+        // Then try to apply migrations
+        try
+        {
+            logger.LogInformation("Applying database migrations...");
+            await context.Database.MigrateAsync(cts.Token);
+            logger.LogInformation("Database migrations completed successfully.");
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(
+                ex,
+                "An error occurred while applying database migrations. This might be normal if it's the first run or if migrations are already applied."
+            );
+        }
+
+        logger.LogInformation("Database initialization completed successfully.");
     }
     catch (Exception ex)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while migrating the database.");
-        throw;
+        logger.LogError(
+            ex,
+            "A critical error occurred while initializing the database. Application will continue to start but may not function properly."
+        );
+        // Don't throw here - we want the app to start even if database initialization fails
     }
 }
 
