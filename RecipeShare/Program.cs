@@ -1,5 +1,6 @@
 using EasyCaching.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using RecipeShare.Data;
 using RecipeShare.Interfaces;
 using RecipeShare.Repository;
@@ -66,7 +67,7 @@ builder.Services.AddEasyCaching(options =>
 // Add SPA static files configuration
 builder.Services.AddSpaStaticFiles(configuration =>
 {
-    configuration.RootPath = "../RecipeShareAngularApp/dist";
+    configuration.RootPath = "wwwroot";
 });
 
 var app = builder.Build();
@@ -95,6 +96,13 @@ else
 app.UseStaticFiles();
 app.UseSpaStaticFiles();
 
+// Configure static files to serve from wwwroot
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
+    RequestPath = ""
+});
+
 app.UseCors("AllowAngularApp");
 app.UseAuthorization();
 
@@ -109,13 +117,21 @@ app.UseWhen(
         appBuilder.UseSpa(spa =>
         {
             spa.Options.SourcePath = "../RecipeShareAngularApp";
+            spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"))
+            };
 
             if (app.Environment.IsDevelopment())
             {
                 // In development, proxy to the Angular dev server
                 spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
             }
-            // In production, the Angular files will be served from the configured root path
+            // In production, ensure static files are served from wwwroot
+            else
+            {
+                spa.Options.DefaultPage = "/index.html";
+            }
         });
     }
 );
