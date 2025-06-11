@@ -10,13 +10,44 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add environment variable substitution for connection strings
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Log the initial connection string (without sensitive data)
 if (!string.IsNullOrEmpty(connectionString))
 {
+    var logConnectionString = connectionString
+        .Replace("${DB_PASSWORD}", "***")
+        .Replace("${DB_USER}", "***");
+    Console.WriteLine($"Initial connection string template: {logConnectionString}");
+}
+
+if (!string.IsNullOrEmpty(connectionString))
+{
+    // Get environment variables
+    var dbServer = Environment.GetEnvironmentVariable("DB_SERVER");
+    var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+    var dbUser = Environment.GetEnvironmentVariable("DB_USER");
+    var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
+
+    // Log environment variables (without sensitive data)
+    Console.WriteLine($"DB_SERVER: {dbServer}");
+    Console.WriteLine($"DB_NAME: {dbName}");
+    Console.WriteLine($"DB_USER: {dbUser}");
+    Console.WriteLine($"DB_PASSWORD: {(string.IsNullOrEmpty(dbPassword) ? "NOT SET" : "SET")}");
+
+    // Perform substitution
     connectionString = connectionString
-        .Replace("${DB_SERVER}", Environment.GetEnvironmentVariable("DB_SERVER") ?? "")
-        .Replace("${DB_NAME}", Environment.GetEnvironmentVariable("DB_NAME") ?? "")
-        .Replace("${DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "")
-        .Replace("${DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "");
+        .Replace("${DB_SERVER}", dbServer ?? "")
+        .Replace("${DB_NAME}", dbName ?? "")
+        .Replace("${DB_USER}", dbUser ?? "")
+        .Replace("${DB_PASSWORD}", dbPassword ?? "");
+
+    // Log final connection string (without sensitive data)
+    var finalLogConnectionString = connectionString;
+    if (!string.IsNullOrEmpty(dbPassword))
+    {
+        finalLogConnectionString = connectionString.Replace(dbPassword, "***");
+    }
+    Console.WriteLine($"Final connection string: {finalLogConnectionString}");
 }
 
 // Validate connection string
@@ -24,6 +55,14 @@ if (string.IsNullOrEmpty(connectionString))
 {
     throw new InvalidOperationException(
         "Connection string 'DefaultConnection' is not configured. Please check your app settings."
+    );
+}
+
+// Validate that all placeholders have been replaced
+if (connectionString.Contains("${"))
+{
+    throw new InvalidOperationException(
+        $"Connection string contains unresolved placeholders: {connectionString}"
     );
 }
 
@@ -64,7 +103,7 @@ builder.Services.AddEasyCaching(options =>
     options.UseInMemory("default");
 });
 
-// Add SPA static files configuration
+// Add SPA static files configuration - we'll configure this dynamically later
 builder.Services.AddSpaStaticFiles(configuration =>
 {
     configuration.RootPath = "wwwroot";
@@ -92,16 +131,11 @@ else
     app.UseHttpsRedirection();
 }
 
-// Add Static Files and SPA configuration
+// Configure static files - serve from wwwroot directory
 app.UseStaticFiles();
-app.UseSpaStaticFiles();
 
-// Configure static files to serve from wwwroot
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
-    RequestPath = ""
-});
+// Configure SPA static files
+app.UseSpaStaticFiles();
 
 app.UseCors("AllowAngularApp");
 app.UseAuthorization();
@@ -111,26 +145,41 @@ app.MapControllers();
 
 // Configure SPA routing - only for non-API routes
 app.UseWhen(
-    context => !context.Request.Path.StartsWithSegments("/api"),
+    context =>
+        !context.Request.Path.StartsWithSegments("/api")
+        && !context.Request.Path.StartsWithSegments("/swagger"),
     appBuilder =>
     {
         appBuilder.UseSpa(spa =>
         {
             spa.Options.SourcePath = "../RecipeShareAngularApp";
-            spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"))
-            };
 
             if (app.Environment.IsDevelopment())
             {
                 // In development, proxy to the Angular dev server
                 spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
             }
-            // In production, ensure static files are served from wwwroot
             else
             {
+                // In production, serve from wwwroot
                 spa.Options.DefaultPage = "/index.html";
+                spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        Path.Combine(app.Environment.ContentRootPath, "wwwroot")
+                    )
+                };
+
+                Console.WriteLine("SPA configured for production - serving from wwwroot");
+
+                // Log if index.html exists
+                var indexPath = Path.Combine(
+                    app.Environment.ContentRootPath,
+                    "wwwroot",
+                    "index.html"
+                );
+                Console.WriteLine($"Looking for index.html at: {indexPath}");
+                Console.WriteLine($"Index.html exists: {File.Exists(indexPath)}");
             }
         });
     }
@@ -185,3 +234,4 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+

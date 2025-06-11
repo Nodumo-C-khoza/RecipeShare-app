@@ -4,6 +4,18 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <PublishSingleFile>false</PublishSingleFile>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,51 +28,62 @@
   <ItemGroup>
     <PackageReference Include="EasyCaching.Core" Version="1.9.2" />
     <PackageReference Include="EasyCaching.InMemory" Version="1.9.2" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.10" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.5" />
-    <PackageReference Include="Microsoft.SqlServer.Server" Version="1.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
-    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8.0.10" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.8.1" />
   </ItemGroup>
 
+  <!-- Development/Testing packages -->
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.1.8" />
+  </ItemGroup>
+
+  <!-- SPA Configuration -->
   <PropertyGroup>
     <SpaRoot>../RecipeShareAngularApp/</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules/**</DefaultItemExcludes>
-    <DotNetPublishRecursive>true</DotNetPublishRecursive>
+    <BuildServerSideRenderer>false</BuildServerSideRenderer>
   </PropertyGroup>
 
-  <ItemGroup>
-    <!-- This is generally not needed if using SpaServices and copying dist files manually -->
-    <!-- <Content Include="wwwroot**" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" /> -->
+  <!-- Ensure Node.js dependencies are restored in development -->
+  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules')">
+    <Message Importance="high" Text="Restoring Node.js dependencies from $(SpaRoot)" />
+
+    <!-- Check if Node.js is available -->
+    <Exec Command="node --version" ContinueOnError="true" EchoOff="true">
+      <Output TaskParameter="ExitCode" PropertyName="NodeExitCode" />
+    </Exec>
+
+    <Error Condition="'$(NodeExitCode)' != '0'" Text="Node.js is not installed or not available in PATH. Please install Node.js to build the Angular application." />
+
+    <!-- Install npm dependencies -->
+    <Exec Command="npm install" WorkingDirectory="$(SpaRoot)" ContinueOnError="false" />
+  </Target>
+
+  <!-- Enhanced Angular build for production -->
+  <!-- Temporarily removed PublishRunAngular target to avoid XML comment errors and manual Angular build is being used -->
+
+  <!-- Clean Angular build output -->
+  <Target Name="CleanSpaOutput" BeforeTargets="Clean">
+    <Message Importance="high" Text="Cleaning Angular build output..." />
+    <RemoveDir Directories="$(SpaRoot)dist;wwwroot" ContinueOnError="true" />
+  </Target>
+
+  <!-- Development file watching (optional) -->
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <Watch Include="$(SpaRoot)src/**/*.ts" />
+    <Watch Include="$(SpaRoot)src/**/*.html" />
+    <Watch Include="$(SpaRoot)src/**/*.scss" />
+    <Watch Include="$(SpaRoot)src/**/*.css" />
   </ItemGroup>
-
-  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
-    <!-- Ensure Node.js is installed -->
-    <Exec Command="node --version" ContinueOnError="true" />
-    <Exec Command="npm --version" ContinueOnError="true" />
-
-    <Message Importance="high" Text="Restoring dependencies from $(SpaRoot)" />
-    <Exec Command="npm install" WorkingDirectory="$(SpaRoot)" />
-  </Target>
-
-  <Target Name="PublishRunWebpack" AfterTargets="ComputePublishContentAsync">
-    <!-- As part of publishing, ensure the JS app is built and placed in the wwwroot folder -->
-    <Exec Command="npm install" WorkingDirectory="$(SpaRoot)" />
-    <Exec Command="npm run build -- --configuration production" WorkingDirectory="$(SpaRoot)" />
-
-    <ItemGroup>
-      <!-- Copy the actual build output (dist folder) - Fixed path to match Angular build output -->
-      <DistFiles Include="$(SpaRoot)dist/recipe-share/**" />
-    </ItemGroup>
-
-    <Copy SourceFiles="@(DistFiles)" DestinationFolder="wwwroot/%(RecursiveDir)" />
-    <!-- Removed copying of node_modules as it's not needed in wwwroot and can cause path issues -->
-  </Target>
 
 </Project>

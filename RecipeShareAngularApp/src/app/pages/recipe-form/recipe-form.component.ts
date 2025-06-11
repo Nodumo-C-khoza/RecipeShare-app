@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RecipeService } from '../../services/recipe.service';
-import { Recipe, CreateRecipe } from '../../models/recipe';
+import { Recipe, CreateRecipe, CreateIngredient } from '../../models/recipe';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -45,6 +45,14 @@ export class RecipeFormComponent implements OnInit {
   dietaryTags: DietaryTag[] = [];
   difficultyLevels: string[] = [];
   loading = false;
+
+  private createNewIngredient(): CreateIngredient {
+    return {
+      name: '',
+      amount: '',
+      unit: ''
+    };
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -188,6 +196,32 @@ export class RecipeFormComponent implements OnInit {
       unit: ingredient.unit
     }));
 
+    // Validate ingredients
+    if (this.recipe.ingredients.length === 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validation Error',
+        text: 'At least one ingredient is required',
+        confirmButtonColor: '#3085d6'
+      });
+      return;
+    }
+
+    // Validate each ingredient's fields
+    const invalidIngredients = this.recipe.ingredients.filter(ingredient => 
+      !ingredient.name || !ingredient.amount || !ingredient.unit
+    );
+
+    if (invalidIngredients.length > 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validation Error',
+        text: 'All ingredient fields (name, amount, unit) are required',
+        confirmButtonColor: '#3085d6'
+      });
+      return;
+    }
+
     if (!this.recipe.title || this.recipe.title.length < 3) {
       Swal.fire({
         icon: 'warning',
@@ -244,6 +278,17 @@ export class RecipeFormComponent implements OnInit {
     };
 
     if (this.isEditMode) {
+      // Validate ingredients before update
+      if (this.recipe.ingredients.length === 0) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Validation Error',
+          text: 'A recipe must have at least one ingredient.',
+          confirmButtonColor: '#3085d6'
+        });
+        return;
+      }
+
       this.recipeService.updateRecipe(this.recipe.id, recipeData).subscribe({
         next: () => {
           Swal.fire({
