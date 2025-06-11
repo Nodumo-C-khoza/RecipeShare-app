@@ -18,16 +18,38 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: RecipeShareAngularApp/package-lock.json
+
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0'
+
+      - name: Install Angular dependencies
+        run: |
+          cd RecipeShareAngularApp
+          npm ci
+
+      - name: Build Angular frontend
+        run: |
+          cd RecipeShareAngularApp
+          npm run build -- --configuration production
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+
+      - name: Copy Angular build to wwwroot
+        run: |
+          mkdir -p ${{env.DOTNET_ROOT}}/myapp/wwwroot
+          cp -r RecipeShareAngularApp/dist/recipe-share/browser/* ${{env.DOTNET_ROOT}}/myapp/wwwroot/
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
