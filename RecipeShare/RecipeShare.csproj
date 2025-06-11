@@ -55,8 +55,8 @@
     <Exec Command="npm run build -- --configuration production" WorkingDirectory="$(SpaRoot)" />
 
     <ItemGroup>
-      <!-- Only copy the actual build output (dist folder) -->
-      <DistFiles Include="$(SpaRoot)dist/recipeshareangularapp/**" />
+      <!-- Copy the actual build output (dist folder) - Fixed path to match Angular build output -->
+      <DistFiles Include="$(SpaRoot)dist/recipe-share/**" />
     </ItemGroup>
 
     <Copy SourceFiles="@(DistFiles)" DestinationFolder="wwwroot/%(RecursiveDir)" />
