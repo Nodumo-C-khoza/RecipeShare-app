@@ -28,11 +28,13 @@ builder.Services.AddCors(options =>
     options.AddPolicy(
         "AllowAngularApp",
         builder =>
+        {
             builder
-                .WithOrigins("http://localhost:4200")
+                .WithOrigins("http://localhost:4200", "https://recipeshare.azurewebsites.net")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
-                .AllowCredentials()
+                .AllowCredentials();
+        }
     );
 });
 
@@ -56,8 +58,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    // Production settings
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "RecipeShare API v1");
+        c.RoutePrefix = "swagger";
+    });
 
-app.UseHttpsRedirection();
+    // Force HTTPS in production
+    app.UseHttpsRedirection();
+}
 
 // Add Static Files and SPA configuration
 app.UseStaticFiles();
@@ -92,8 +105,17 @@ app.UseWhen(
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<ApplicationDbContext>();
-    context.Database.Migrate();
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating the database.");
+        throw;
+    }
 }
 
 app.Run();
