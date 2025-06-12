@@ -11,56 +11,23 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     permissions:
       contents: read #This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: RecipeShareAngularApp/package-lock.json
-
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0'
-
-      - name: Install Angular dependencies
-        run: |
-          cd RecipeShareAngularApp
-          npm ci
-
-      - name: Build Angular frontend
-        run: |
-          cd RecipeShareAngularApp
-          npm run build -- --configuration production
-        env:
-          NODE_OPTIONS: --max_old_space_size=4096
+          dotnet-version: 'v8.0'
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
-
-      - name: Copy Angular build to wwwroot
-        run: |
-          mkdir -p ${{env.DOTNET_ROOT}}/myapp/wwwroot
-          cp -r RecipeShareAngularApp/dist/recipe-share/browser/* ${{env.DOTNET_ROOT}}/myapp/wwwroot/
-          echo "Angular build files copied to wwwroot"
-          ls -la ${{env.DOTNET_ROOT}}/myapp/wwwroot/
-
-      - name: Verify wwwroot contents
-        run: |
-          echo "Checking wwwroot contents:"
-          ls -la ${{env.DOTNET_ROOT}}/myapp/wwwroot/
-          echo "Checking if index.html exists:"
-          test -f ${{env.DOTNET_ROOT}}/myapp/wwwroot/index.html && echo "✅ index.html found" || echo "❌ index.html missing"
+        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -69,7 +36,7 @@ jobs:
           path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: build
     environment:
       name: 'Production'
@@ -87,22 +54,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Configure App Settings
-        run: |
-          az webapp config appsettings set \
-            --name "the-recipeshare-app" \
-            --resource-group "recipeshare-rg" \
-            --settings \
-            ASPNETCORE_ENVIRONMENT=Production \
-            DB_SERVER=recipeshare.database.windows.net \
-            DB_NAME=RecipeShareDb \
-            DB_USER=sqladmin@recipeshare \
-            DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_9E5657B372C74D40AC62DAC08EA8025A }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_836DFDB17F084EF68632EE47B539A9A6 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CDE8F74E6297432B87FF07EEA269CB45 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -111,11 +65,4 @@ jobs:
           app-name: 'the-recipeshare-app'
           slot-name: 'Production'
           package: .
-          
-      - name: Verify deployment
-        run: |
-          echo "Waiting for app to start..."
-          sleep 30
-          echo "Checking app status..."
-          az webapp show --name "the-recipeshare-app" --resource-group "recipeshare-rg" --query "state"
           
