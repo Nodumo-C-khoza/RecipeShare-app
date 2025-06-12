@@ -1,0 +1,121 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy ASP.Net Core app to Azure Web App - the-recipeshare-app
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read #This is required for actions/checkout
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: RecipeShareAngularApp/package-lock.json
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0'
+
+      - name: Install Angular dependencies
+        run: |
+          cd RecipeShareAngularApp
+          npm ci
+
+      - name: Build Angular frontend
+        run: |
+          cd RecipeShareAngularApp
+          npm run build -- --configuration production
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096
+
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+
+      - name: dotnet publish
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+
+      - name: Copy Angular build to wwwroot
+        run: |
+          mkdir -p ${{env.DOTNET_ROOT}}/myapp/wwwroot
+          cp -r RecipeShareAngularApp/dist/recipe-share/browser/* ${{env.DOTNET_ROOT}}/myapp/wwwroot/
+          echo "Angular build files copied to wwwroot"
+          ls -la ${{env.DOTNET_ROOT}}/myapp/wwwroot/
+
+      - name: Verify wwwroot contents
+        run: |
+          echo "Checking wwwroot contents:"
+          ls -la ${{env.DOTNET_ROOT}}/myapp/wwwroot/
+          echo "Checking if index.html exists:"
+          test -f ${{env.DOTNET_ROOT}}/myapp/wwwroot/index.html && echo "✅ index.html found" || echo "❌ index.html missing"
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-app
+      
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Configure App Settings
+        run: |
+          az webapp config appsettings set \
+            --name "the-recipeshare-app" \
+            --resource-group "recipeshare-rg" \
+            --settings \
+            ASPNETCORE_ENVIRONMENT=Production \
+            DB_SERVER=recipeshare.database.windows.net \
+            DB_NAME=RecipeShareDb \
+            DB_USER=sqladmin@recipeshare \
+            DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'the-recipeshare-app'
+          slot-name: 'Production'
+          package: .
+          
+      - name: Verify deployment
+        run: |
+          echo "Waiting for app to start..."
+          sleep 30
+          echo "Checking app status..."
+          az webapp show --name "the-recipeshare-app" --resource-group "recipeshare-rg" --query "state"
+          
