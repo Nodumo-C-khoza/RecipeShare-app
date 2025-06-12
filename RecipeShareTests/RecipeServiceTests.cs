@@ -226,6 +226,10 @@ namespace RecipeShareTests
             _mockRecipeRepository
                 .Setup(repo => repo.GetAvailableDifficultyLevelsAsync())
                 .ReturnsAsync(new List<DifficultyLevel> { difficultyLevel });
+            var dietaryTags = new List<DietaryTag>
+            {
+                new DietaryTag { Id = 1, Name = "Vegetarian" }
+            };
 
             var expectedRecipe = new Recipe
             {
