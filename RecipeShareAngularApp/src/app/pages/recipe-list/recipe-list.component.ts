@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
@@ -52,7 +52,7 @@ interface DietaryTag {
   templateUrl: './recipe-list.component.html',
   styleUrls: ['./recipe-list.component.css']
 })
-export class RecipeListComponent implements OnInit, OnDestroy {
+export class RecipeListComponent implements OnInit, OnDestroy, AfterViewInit {
   recipes: Recipe[] = [];
   filteredRecipes: Recipe[] = [];
   dataSource = new MatTableDataSource<Recipe>();
@@ -79,20 +79,72 @@ export class RecipeListComponent implements OnInit, OnDestroy {
     this.routerSubscription = this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
-      this.loadRecipes();
+      // Only reload if we're coming back to the recipes list
+      if (this.router.url.includes('/recipes') && !this.router.url.includes('/new') && !this.router.url.includes('/edit')) {
+        this.loadRecipes();
+      }
     });
   }
 
   ngOnInit(): void {
+    this.loadFilterState();
     this.loadRecipes();
     this.loadDietaryTags();
     this.loadDifficultyLevels();
+
+    // Subscribe to recipe updates to refresh the list
+    this.recipeService.recipeUpdated$.subscribe(() => {
+      this.loadRecipes();
+    });
+  }
+
+  ngAfterViewInit(): void {
+    // Set paginator page after view is initialized
+    if (this.paginator) {
+      this.paginator.pageIndex = this.currentPage;
+      this.paginator.pageSize = this.pageSize;
+    }
   }
 
   ngOnDestroy(): void {
     if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
     }
+  }
+
+  private saveFilterState(): void {
+    const filterState = {
+      searchQuery: this.searchQuery,
+      filterTag: this.filterTag,
+      filterMaxTime: this.filterMaxTime,
+      filterDifficulty: this.filterDifficulty,
+      filterQuickRecipes: this.filterQuickRecipes,
+      currentPage: this.currentPage,
+      pageSize: this.pageSize
+    };
+    localStorage.setItem('recipeListFilters', JSON.stringify(filterState));
+  }
+
+  private loadFilterState(): void {
+    const savedState = localStorage.getItem('recipeListFilters');
+    if (savedState) {
+      try {
+        const filterState = JSON.parse(savedState);
+        this.searchQuery = filterState.searchQuery || '';
+        this.filterTag = filterState.filterTag || '';
+        this.filterMaxTime = filterState.filterMaxTime || null;
+        this.filterDifficulty = filterState.filterDifficulty || '';
+        this.filterQuickRecipes = filterState.filterQuickRecipes || false;
+        this.currentPage = filterState.currentPage || 0;
+        this.pageSize = filterState.pageSize || 20;
+      } catch (error) {
+        console.error('Error loading filter state:', error);
+      }
+    }
+  }
+
+  private clearFilterState(): void {
+    localStorage.removeItem('recipeListFilters');
   }
 
   loadDietaryTags(): void {
@@ -151,6 +203,7 @@ export class RecipeListComponent implements OnInit, OnDestroy {
         this.dataSource.data = this.recipes;
         this.totalItems = result.totalCount;
         this.loading = false;
+        this.saveFilterState();
       },
       error: (error) => {
         this.loading = false;
@@ -170,7 +223,7 @@ export class RecipeListComponent implements OnInit, OnDestroy {
     if (this.paginator) {
       this.paginator.firstPage();
     }
-
+    this.saveFilterState();
     this.loadRecipes();
   }
 
@@ -180,12 +233,26 @@ export class RecipeListComponent implements OnInit, OnDestroy {
     this.filterMaxTime = null;
     this.filterDifficulty = '';
     this.filterQuickRecipes = false;
+    this.currentPage = 0;
+    this.saveFilterState();
+    this.applyFilter();
+  }
+
+  clearAllFilters(): void {
+    this.searchQuery = '';
+    this.filterTag = '';
+    this.filterMaxTime = null;
+    this.filterDifficulty = '';
+    this.filterQuickRecipes = false;
+    this.currentPage = 0;
+    this.clearFilterState();
     this.applyFilter();
   }
 
   onPageChange(event: PageEvent): void {
     this.pageSize = event.pageSize;
     this.currentPage = event.pageIndex;
+    this.saveFilterState();
     this.loadRecipes();
   }
 

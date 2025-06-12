@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { Recipe, CreateRecipe, PaginatedResult } from '../models/recipe';
 import { tap, catchError } from 'rxjs/operators';
 
@@ -17,8 +17,15 @@ interface DietaryTag {
 })
 export class RecipeService {
   private apiUrl = 'http://localhost:5229/api/recipes';
+  private recipeUpdateSubject = new BehaviorSubject<void>(undefined);
+  public recipeUpdated$ = this.recipeUpdateSubject.asObservable();
 
   constructor(private http: HttpClient) { }
+
+  // Method to notify components that recipes have been updated
+  notifyRecipeUpdate(): void {
+    this.recipeUpdateSubject.next();
+  }
 
   getRecipes(
     pageNumber: number = 1,
@@ -58,7 +65,10 @@ export class RecipeService {
 
   createRecipe(recipe: CreateRecipe): Observable<Recipe> {
     return this.http.post<Recipe>(`${this.apiUrl}/CreateRecipe`, recipe).pipe(
-      tap(response => console.log('Recipe created successfully:', response)),
+      tap(response => {
+        console.log('Recipe created successfully:', response);
+        this.notifyRecipeUpdate();
+      }),
       catchError(error => {
         console.error('Error creating recipe:', error);
         throw error;
@@ -68,7 +78,10 @@ export class RecipeService {
 
   updateRecipe(id: number, recipe: CreateRecipe): Observable<Recipe> {
     return this.http.put<Recipe>(`${this.apiUrl}/UpdateRecipe/${id}`, recipe).pipe(
-      tap(response => console.log('Recipe updated successfully:', response)),
+      tap(response => {
+        console.log('Recipe updated successfully:', response);
+        this.notifyRecipeUpdate();
+      }),
       catchError(error => {
         console.error(`Error updating recipe ${id}:`, error);
         throw error;
@@ -77,7 +90,16 @@ export class RecipeService {
   }
 
   deleteRecipe(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/DeleteRecipe/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/DeleteRecipe/${id}`).pipe(
+      tap(() => {
+        console.log('Recipe deleted successfully');
+        this.notifyRecipeUpdate();
+      }),
+      catchError(error => {
+        console.error(`Error deleting recipe ${id}:`, error);
+        throw error;
+      })
+    );
   }
 
   getAvailableDietaryTags(): Observable<DietaryTag[]> {

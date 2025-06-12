@@ -208,7 +208,7 @@ export class RecipeFormComponent implements OnInit {
     }
 
     // Validate each ingredient's fields
-    const invalidIngredients = this.recipe.ingredients.filter(ingredient => 
+    const invalidIngredients = this.recipe.ingredients.filter(ingredient =>
       !ingredient.name || !ingredient.amount || !ingredient.unit
     );
 
@@ -302,26 +302,10 @@ export class RecipeFormComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error updating recipe:', error);
-          console.error('Error response:', error.error);
-          console.error('Error status:', error.status);
-          console.error('Error message:', error.message);
-
-          let errorMessage = 'Failed to update recipe.';
-
-          if (error.error) {
-            if (typeof error.error === 'string') {
-              errorMessage = error.error;
-            } else if (error.error.message) {
-              errorMessage = error.error.message;
-            } else if (error.error.title) {
-              errorMessage = error.error.title;
-            }
-          }
-
           Swal.fire({
             icon: 'error',
             title: 'Update Failed',
-            text: errorMessage,
+            text: 'Failed to update recipe. Please try again.',
             confirmButtonColor: '#3085d6'
           });
         }
@@ -342,26 +326,10 @@ export class RecipeFormComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error creating recipe:', error);
-          console.error('Error response:', error.error);
-          console.error('Error status:', error.status);
-          console.error('Error message:', error.message);
-
-          let errorMessage = 'Failed to create recipe.';
-
-          if (error.error) {
-            if (typeof error.error === 'string') {
-              errorMessage = error.error;
-            } else if (error.error.message) {
-              errorMessage = error.error.message;
-            } else if (error.error.title) {
-              errorMessage = error.error.title;
-            }
-          }
-
           Swal.fire({
             icon: 'error',
             title: 'Creation Failed',
-            text: errorMessage,
+            text: 'Failed to create recipe. Please try again.',
             confirmButtonColor: '#3085d6'
           });
         }

@@ -10,6 +10,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RecipeService } from '../../services/recipe.service';
 import { Recipe } from '../../models/recipe';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-recipe-detail',
@@ -62,14 +63,36 @@ export class RecipeDetailComponent implements OnInit {
   }
 
   deleteRecipe(): void {
-    if (this.recipe && confirm('Are you sure you want to delete this recipe?')) {
-      this.recipeService.deleteRecipe(this.recipe.id).subscribe({
-        next: () => {
-          this.goBack();
-        },
-        error: (error) => {
-          this.error = 'Error deleting recipe';
-          console.error('Error deleting recipe:', error);
+    if (this.recipe) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.recipeService.deleteRecipe(this.recipe!.id).subscribe({
+            next: () => {
+              Swal.fire(
+                'Deleted!',
+                'Recipe has been deleted.',
+                'success'
+              );
+              this.goBack();
+            },
+            error: (error) => {
+              this.error = 'Error deleting recipe';
+              console.error('Error deleting recipe:', error);
+              Swal.fire(
+                'Error!',
+                'Failed to delete recipe. Please try again.',
+                'error'
+              );
+            }
+          });
         }
       });
     }

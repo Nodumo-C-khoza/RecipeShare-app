@@ -67,7 +67,8 @@ namespace RecipeShare.Services
             }
 
             // Validate dietary tag IDs
-            var validTagIds = new HashSet<int> { 1, 2, 3, 4, 5, 6, 7 }; // IDs for valid tags
+            var availableTags = await _recipeRepository.GetAvailableDietaryTagsAsync();
+            var validTagIds = new HashSet<int>(availableTags.Select(t => t.Id));
             if (
                 viewModel.DietaryTagIds != null
                 && viewModel.DietaryTagIds.Any(id => !validTagIds.Contains(id))
@@ -131,6 +132,17 @@ namespace RecipeShare.Services
             if (!viewModel.DifficultyLevelId.HasValue)
             {
                 throw new ArgumentException("Difficulty level ID is required");
+            }
+
+            // Validate dietary tag IDs
+            var availableTags = await _recipeRepository.GetAvailableDietaryTagsAsync();
+            var validTagIds = new HashSet<int>(availableTags.Select(t => t.Id));
+            if (
+                viewModel.DietaryTagIds != null
+                && viewModel.DietaryTagIds.Any(id => !validTagIds.Contains(id))
+            )
+            {
+                throw new ArgumentException("Invalid dietary tag ID provided");
             }
 
             var difficultyLevels = await _recipeRepository.GetAvailableDifficultyLevelsAsync();
