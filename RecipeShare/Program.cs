@@ -8,10 +8,8 @@ using RecipeShare.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add environment variable substitution for connection strings
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Log the initial connection string (without sensitive data)
 if (!string.IsNullOrEmpty(connectionString))
 {
     var logConnectionString = connectionString
@@ -22,26 +20,22 @@ if (!string.IsNullOrEmpty(connectionString))
 
 if (!string.IsNullOrEmpty(connectionString))
 {
-    // Get environment variables
     var dbServer = Environment.GetEnvironmentVariable("DB_SERVER");
     var dbName = Environment.GetEnvironmentVariable("DB_NAME");
     var dbUser = Environment.GetEnvironmentVariable("DB_USER");
     var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
 
-    // Log environment variables (without sensitive data)
     Console.WriteLine($"DB_SERVER: {dbServer}");
     Console.WriteLine($"DB_NAME: {dbName}");
     Console.WriteLine($"DB_USER: {dbUser}");
     Console.WriteLine($"DB_PASSWORD: {(string.IsNullOrEmpty(dbPassword) ? "NOT SET" : "SET")}");
 
-    // Perform substitution
     connectionString = connectionString
         .Replace("${DB_SERVER}", dbServer ?? "")
         .Replace("${DB_NAME}", dbName ?? "")
         .Replace("${DB_USER}", dbUser ?? "")
         .Replace("${DB_PASSWORD}", dbPassword ?? "");
 
-    // Log final connection string (without sensitive data)
     var finalLogConnectionString = connectionString;
     if (!string.IsNullOrEmpty(dbPassword))
     {
@@ -50,7 +44,6 @@ if (!string.IsNullOrEmpty(connectionString))
     Console.WriteLine($"Final connection string: {finalLogConnectionString}");
 }
 
-// Validate connection string
 if (string.IsNullOrEmpty(connectionString))
 {
     throw new InvalidOperationException(
@@ -58,7 +51,6 @@ if (string.IsNullOrEmpty(connectionString))
     );
 }
 
-// Validate that all placeholders have been replaced
 if (connectionString.Contains("${"))
 {
     throw new InvalidOperationException(
@@ -111,7 +103,6 @@ builder.Services.AddSpaStaticFiles(configuration =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -127,14 +118,11 @@ else
         c.RoutePrefix = "swagger";
     });
 
-    // Force HTTPS in production
     app.UseHttpsRedirection();
 }
 
-// Configure static files - serve from wwwroot directory
 app.UseStaticFiles();
 
-// Configure SPA static files
 app.UseSpaStaticFiles();
 
 app.UseCors("AllowAngularApp");
@@ -185,7 +173,6 @@ app.UseWhen(
     }
 );
 
-// Ensure database is created and migrations are applied
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -197,16 +184,13 @@ using (var scope = app.Services.CreateScope())
 
         var context = services.GetRequiredService<ApplicationDbContext>();
 
-        // Set a timeout for database operations
         var timeout = TimeSpan.FromMinutes(2);
         using var cts = new CancellationTokenSource(timeout);
 
-        // First, ensure the database exists
         logger.LogInformation("Ensuring database exists...");
         await context.Database.EnsureCreatedAsync(cts.Token);
         logger.LogInformation("Database creation/verification completed.");
 
-        // Then try to apply migrations
         try
         {
             logger.LogInformation("Applying database migrations...");

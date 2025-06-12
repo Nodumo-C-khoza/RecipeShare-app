@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecipeShare.Data;
 
@@ -11,9 +12,11 @@ using RecipeShare.Data;
 namespace RecipeShare.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250612093026_SeedFullData")]
+    partial class SeedFullData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -621,86 +624,6 @@ namespace RecipeShare.Migrations
                             Name = "Herbs",
                             RecipeId = 10,
                             Unit = "cup"
-                        },
-                        new
-                        {
-                            Id = 100,
-                            Amount = "1",
-                            Name = "Whole Chicken",
-                            RecipeId = 12,
-                            Unit = "whole"
-                        },
-                        new
-                        {
-                            Id = 101,
-                            Amount = "4",
-                            Name = "Butter",
-                            RecipeId = 13,
-                            Unit = "tbsp"
-                        },
-                        new
-                        {
-                            Id = 102,
-                            Amount = "4",
-                            Name = "Salmon Fillets",
-                            RecipeId = 14,
-                            Unit = "pieces"
-                        },
-                        new
-                        {
-                            Id = 103,
-                            Amount = "2",
-                            Name = "Beef Chuck",
-                            RecipeId = 15,
-                            Unit = "lbs"
-                        },
-                        new
-                        {
-                            Id = 104,
-                            Amount = "1",
-                            Name = "Chicken Thighs",
-                            RecipeId = 16,
-                            Unit = "lb"
-                        },
-                        new
-                        {
-                            Id = 105,
-                            Amount = "1",
-                            Name = "White Fish",
-                            RecipeId = 17,
-                            Unit = "lb"
-                        },
-                        new
-                        {
-                            Id = 106,
-                            Amount = "1",
-                            Name = "Spaghetti",
-                            RecipeId = 18,
-                            Unit = "lb"
-                        },
-                        new
-                        {
-                            Id = 107,
-                            Amount = "2",
-                            Name = "Eggplant",
-                            RecipeId = 19,
-                            Unit = "medium"
-                        },
-                        new
-                        {
-                            Id = 108,
-                            Amount = "2",
-                            Name = "Pork Shoulder",
-                            RecipeId = 20,
-                            Unit = "lbs"
-                        },
-                        new
-                        {
-                            Id = 109,
-                            Amount = "8",
-                            Name = "Chicken Legs",
-                            RecipeId = 21,
-                            Unit = "pieces"
                         });
                 });
 
@@ -948,7 +871,7 @@ namespace RecipeShare.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "British-Indian curry with tender chicken and aromatic spices",
                             DifficultyLevelId = 2,
-                            ImageUrl = "https://www.themealdb.com/images/media/meals/wyxwsp1486979827.jpg",
+                            ImageUrl = "https://www.themealdb.com/images/media/meals/wxu3ux1487348960.jpg",
                             Instructions = "1. Marinate chicken in spices\n2. Cook onions and garlic\n3. Add chicken and tomatoes\n4. Simmer until tender",
                             PrepTimeMinutes = 25,
                             Servings = 4,
@@ -961,7 +884,7 @@ namespace RecipeShare.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Traditional British fish pie with creamy sauce and mashed potato",
                             DifficultyLevelId = 2,
-                            ImageUrl = "https://www.themealdb.com/images/media/meals/tvtxpq1511464705.jpg",
+                            ImageUrl = "https://www.themealdb.com/images/media/meals/ysxwrt1511817232.jpg",
                             Instructions = "1. Poach fish in milk\n2. Make white sauce\n3. Layer fish and sauce\n4. Top with mashed potatoes and bake",
                             PrepTimeMinutes = 30,
                             Servings = 6,

@@ -186,6 +186,41 @@ namespace RecipeShare.Data
                         Name = "NutFree",
                         DisplayName = "Nut-Free",
                         Description = "Contains no nuts"
+                    },
+                    new DietaryTag
+                    {
+                        Id = 8,
+                        Name = "Seafood",
+                        DisplayName = "Seafood",
+                        Description = "Contains fish or shellfish"
+                    },
+                    new DietaryTag
+                    {
+                        Id = 9,
+                        Name = "Dessert",
+                        DisplayName = "Dessert",
+                        Description = "Sweet treats and desserts"
+                    },
+                    new DietaryTag
+                    {
+                        Id = 10,
+                        Name = "Chicken",
+                        DisplayName = "Chicken",
+                        Description = "Contains chicken or poultry"
+                    },
+                    new DietaryTag
+                    {
+                        Id = 11,
+                        Name = "Pasta",
+                        DisplayName = "Pasta",
+                        Description = "Pasta-based dishes"
+                    },
+                    new DietaryTag
+                    {
+                        Id = 12,
+                        Name = "Beef",
+                        DisplayName = "Beef",
+                        Description = "Beef-based dishes"
                     }
                 );
 
@@ -337,6 +372,158 @@ namespace RecipeShare.Data
                         ImageUrl = "https://www.themealdb.com/images/media/meals/1550441882.jpg",
                         CreatedAt = new DateTime(2025, 1, 1),
                         DifficultyLevelId = 1
+                    },
+                    new Recipe
+                    {
+                        Id = 12,
+                        Title = "Lemon & Herb Roast Chicken",
+                        Description = "Classic roast chicken with fresh herbs and lemon",
+                        Instructions =
+                            "1. Preheat oven to 375°F\n2. Season chicken with herbs and lemon\n3. Roast for 1-1.5 hours\n4. Let rest before carving",
+                        PrepTimeMinutes = 20,
+                        CookTimeMinutes = 90,
+                        Servings = 6,
+                        ImageUrl =
+                            "https://www.themealdb.com/images/media/meals/uvuyxu1503067369.jpg",
+                        CreatedAt = new DateTime(2025, 1, 1),
+                        DifficultyLevelId = 2
+                    },
+                    new Recipe
+                    {
+                        Id = 13,
+                        Title = "Bechamel Sauce",
+                        Description = "Classic French white sauce for pasta and gratins",
+                        Instructions =
+                            "1. Melt butter in saucepan\n2. Add flour and cook roux\n3. Gradually add milk\n4. Season and simmer until thickened",
+                        PrepTimeMinutes = 10,
+                        CookTimeMinutes = 15,
+                        Servings = 4,
+                        ImageUrl =
+                            "https://www.themealdb.com/images/media/meals/ysxwuq1487323065.jpg",
+                        CreatedAt = new DateTime(2025, 1, 1),
+                        DifficultyLevelId = 2
+                    },
+                    new Recipe
+                    {
+                        Id = 14,
+                        Title = "Honey Teriyaki Salmon",
+                        Description = "Sweet and savory salmon with teriyaki glaze",
+                        Instructions =
+                            "1. Marinate salmon in teriyaki sauce\n2. Preheat oven to 400°F\n3. Bake salmon for 12-15 minutes\n4. Glaze with honey",
+                        PrepTimeMinutes = 15,
+                        CookTimeMinutes = 15,
+                        Servings = 4,
+                        ImageUrl =
+                            "https://www.themealdb.com/images/media/meals/xxyupu1468262513.jpg",
+                        CreatedAt = new DateTime(2025, 1, 1),
+                        DifficultyLevelId = 2
+                    },
+                    new Recipe
+                    {
+                        Id = 15,
+                        Title = "Beef Rendang",
+                        Description = "Indonesian slow-cooked beef in coconut milk and spices",
+                        Instructions =
+                            "1. Brown beef in oil\n2. Add coconut milk and spices\n3. Simmer for 2-3 hours\n4. Reduce until sauce thickens",
+                        PrepTimeMinutes = 30,
+                        CookTimeMinutes = 180,
+                        Servings = 6,
+                        ImageUrl =
+                            "https://www.themealdb.com/images/media/meals/bc8v651619789840.jpg",
+                        CreatedAt = new DateTime(2025, 1, 1),
+                        DifficultyLevelId = 3
+                    },
+                    new Recipe
+                    {
+                        Id = 16,
+                        Title = "Chicken Balti",
+                        Description =
+                            "British-Indian curry with tender chicken and aromatic spices",
+                        Instructions =
+                            "1. Marinate chicken in spices\n2. Cook onions and garlic\n3. Add chicken and tomatoes\n4. Simmer until tender",
+                        PrepTimeMinutes = 25,
+                        CookTimeMinutes = 45,
+                        Servings = 4,
+                        ImageUrl =
+                            "https://www.themealdb.com/images/media/meals/wyxwsp1486979827.jpg",
+                        CreatedAt = new DateTime(2025, 1, 1),
+                        DifficultyLevelId = 2
+                    },
+                    new Recipe
+                    {
+                        Id = 17,
+                        Title = "Fish Pie",
+                        Description =
+                            "Traditional British fish pie with creamy sauce and mashed potato",
+                        Instructions =
+                            "1. Poach fish in milk\n2. Make white sauce\n3. Layer fish and sauce\n4. Top with mashed potatoes and bake",
+                        PrepTimeMinutes = 30,
+                        CookTimeMinutes = 40,
+                        Servings = 6,
+                        ImageUrl =
+                            "https://www.themealdb.com/images/media/meals/tvtxpq1511464705.jpg",
+                        CreatedAt = new DateTime(2025, 1, 1),
+                        DifficultyLevelId = 2
+                    },
+                    new Recipe
+                    {
+                        Id = 18,
+                        Title = "Spaghetti Carbonara",
+                        Description = "Classic Italian pasta with eggs, cheese, and pancetta",
+                        Instructions =
+                            "1. Cook pasta al dente\n2. Crisp pancetta\n3. Mix eggs and cheese\n4. Combine with hot pasta",
+                        PrepTimeMinutes = 15,
+                        CookTimeMinutes = 15,
+                        Servings = 4,
+                        ImageUrl =
+                            "https://www.themealdb.com/images/media/meals/llcbn01574260722.jpg",
+                        CreatedAt = new DateTime(2025, 1, 1),
+                        DifficultyLevelId = 2
+                    },
+                    new Recipe
+                    {
+                        Id = 19,
+                        Title = "Ratatouille",
+                        Description = "French vegetable stew with eggplant, zucchini, and tomatoes",
+                        Instructions =
+                            "1. Slice vegetables thinly\n2. Layer in baking dish\n3. Add herbs and olive oil\n4. Bake until tender",
+                        PrepTimeMinutes = 30,
+                        CookTimeMinutes = 60,
+                        Servings = 6,
+                        ImageUrl =
+                            "https://www.themealdb.com/images/media/meals/wqurxy1511453156.jpg",
+                        CreatedAt = new DateTime(2025, 1, 1),
+                        DifficultyLevelId = 2
+                    },
+                    new Recipe
+                    {
+                        Id = 20,
+                        Title = "Portuguese Pork Piri-Piri",
+                        Description = "Spicy Portuguese pork with piri-piri chili sauce",
+                        Instructions =
+                            "1. Marinate pork in piri-piri sauce\n2. Grill or roast pork\n3. Baste with sauce\n4. Serve with rice",
+                        PrepTimeMinutes = 20,
+                        CookTimeMinutes = 45,
+                        Servings = 4,
+                        ImageUrl =
+                            "https://www.themealdb.com/images/media/meals/tvtxpq1511464705.jpg",
+                        CreatedAt = new DateTime(2025, 1, 1),
+                        DifficultyLevelId = 2
+                    },
+                    new Recipe
+                    {
+                        Id = 21,
+                        Title = "Tandoori Chicken",
+                        Description = "Indian spiced chicken marinated in yogurt and spices",
+                        Instructions =
+                            "1. Marinate chicken in yogurt and spices\n2. Let rest for 4-6 hours\n3. Grill or bake until cooked\n4. Serve with naan bread",
+                        PrepTimeMinutes = 30,
+                        CookTimeMinutes = 40,
+                        Servings = 4,
+                        ImageUrl =
+                            "https://www.themealdb.com/images/media/meals/wyxwsp1486979827.jpg",
+                        CreatedAt = new DateTime(2025, 1, 1),
+                        DifficultyLevelId = 2
                     }
                 );
 
@@ -361,8 +548,8 @@ namespace RecipeShare.Data
                     new RecipeDietaryTag { RecipeId = 6, DietaryTagId = 2 }, // Vegan
                     new RecipeDietaryTag { RecipeId = 6, DietaryTagId = 3 }, // Gluten-Free
                     // Gluten-Free Chocolate Cake tags
-                    new RecipeDietaryTag { RecipeId = 7, DietaryTagId = 3 }, // Gluten-Free
-                    new RecipeDietaryTag { RecipeId = 7, DietaryTagId = 4 }, // Dairy-Free
+                    new RecipeDietaryTag { RecipeId = 11, DietaryTagId = 3 }, // Gluten-Free
+                    new RecipeDietaryTag { RecipeId = 11, DietaryTagId = 4 }, // Dairy-Free
                     // Mediterranean Salmon tags
                     new RecipeDietaryTag { RecipeId = 8, DietaryTagId = 5 }, // High Protein
                     new RecipeDietaryTag { RecipeId = 8, DietaryTagId = 6 }, // Low-Carb
@@ -372,7 +559,38 @@ namespace RecipeShare.Data
                     new RecipeDietaryTag { RecipeId = 9, DietaryTagId = 3 }, // Gluten-Free
                     // Cauliflower Rice tags
                     new RecipeDietaryTag { RecipeId = 10, DietaryTagId = 1 }, // Vegetarian
-                    new RecipeDietaryTag { RecipeId = 10, DietaryTagId = 6 } // Low-Carb
+                    new RecipeDietaryTag { RecipeId = 10, DietaryTagId = 6 }, // Low-Carb
+                    // Lemon & Herb Roast Chicken tags
+                    new RecipeDietaryTag { RecipeId = 12, DietaryTagId = 10 }, // Chicken
+                    new RecipeDietaryTag { RecipeId = 12, DietaryTagId = 5 }, // High Protein
+                    // Bechamel Sauce tags
+                    new RecipeDietaryTag { RecipeId = 13, DietaryTagId = 1 }, // Vegetarian
+                    new RecipeDietaryTag { RecipeId = 13, DietaryTagId = 11 }, // Pasta
+                    // Honey Teriyaki Salmon tags
+                    new RecipeDietaryTag { RecipeId = 14, DietaryTagId = 8 }, // Seafood
+                    new RecipeDietaryTag { RecipeId = 14, DietaryTagId = 5 }, // High Protein
+                    new RecipeDietaryTag { RecipeId = 14, DietaryTagId = 6 }, // Low-Carb
+                    // Beef Rendang tags
+                    new RecipeDietaryTag { RecipeId = 15, DietaryTagId = 12 }, // Beef
+                    new RecipeDietaryTag { RecipeId = 15, DietaryTagId = 5 }, // High Protein
+                    // Chicken Balti tags
+                    new RecipeDietaryTag { RecipeId = 16, DietaryTagId = 10 }, // Chicken
+                    new RecipeDietaryTag { RecipeId = 16, DietaryTagId = 5 }, // High Protein
+                    // Fish Pie tags
+                    new RecipeDietaryTag { RecipeId = 17, DietaryTagId = 8 }, // Seafood
+                    new RecipeDietaryTag { RecipeId = 17, DietaryTagId = 5 }, // High Protein
+                    // Spaghetti Carbonara tags
+                    new RecipeDietaryTag { RecipeId = 18, DietaryTagId = 11 }, // Pasta
+                    new RecipeDietaryTag { RecipeId = 18, DietaryTagId = 5 }, // High Protein
+                    // Ratatouille tags
+                    new RecipeDietaryTag { RecipeId = 19, DietaryTagId = 1 }, // Vegetarian
+                    new RecipeDietaryTag { RecipeId = 19, DietaryTagId = 2 }, // Vegan
+                    new RecipeDietaryTag { RecipeId = 19, DietaryTagId = 3 }, // Gluten-Free
+                    // Portuguese Pork Piri-Piri tags
+                    new RecipeDietaryTag { RecipeId = 20, DietaryTagId = 5 }, // High Protein
+                    // Tandoori Chicken tags
+                    new RecipeDietaryTag { RecipeId = 21, DietaryTagId = 10 }, // Chicken
+                    new RecipeDietaryTag { RecipeId = 21, DietaryTagId = 5 } // High Protein
                 );
 
             // Seed ingredients for each recipe
@@ -629,7 +847,7 @@ namespace RecipeShare.Data
                     new Ingredient
                     {
                         Id = 66,
-                        RecipeId = 7,
+                        RecipeId = 11,
                         Name = "Almond Flour",
                         Amount = "2",
                         Unit = "cups"
@@ -637,7 +855,7 @@ namespace RecipeShare.Data
                     new Ingredient
                     {
                         Id = 67,
-                        RecipeId = 7,
+                        RecipeId = 11,
                         Name = "Cocoa Powder",
                         Amount = "3/4",
                         Unit = "cup"
@@ -645,7 +863,7 @@ namespace RecipeShare.Data
                     new Ingredient
                     {
                         Id = 68,
-                        RecipeId = 7,
+                        RecipeId = 11,
                         Name = "Coconut Sugar",
                         Amount = "1",
                         Unit = "cup"
@@ -653,7 +871,7 @@ namespace RecipeShare.Data
                     new Ingredient
                     {
                         Id = 69,
-                        RecipeId = 7,
+                        RecipeId = 11,
                         Name = "Coconut Oil",
                         Amount = "1/2",
                         Unit = "cup"
@@ -661,7 +879,7 @@ namespace RecipeShare.Data
                     new Ingredient
                     {
                         Id = 70,
-                        RecipeId = 7,
+                        RecipeId = 11,
                         Name = "Almond Milk",
                         Amount = "1",
                         Unit = "cup"
@@ -788,6 +1006,96 @@ namespace RecipeShare.Data
                         Name = "Herbs",
                         Amount = "1/4",
                         Unit = "cup"
+                    },
+                    // Ingredients for Lemon & Herb Roast Chicken
+                    new Ingredient
+                    {
+                        Id = 100,
+                        RecipeId = 12,
+                        Name = "Whole Chicken",
+                        Amount = "1",
+                        Unit = "whole"
+                    },
+                    // Ingredients for Bechamel Sauce
+                    new Ingredient
+                    {
+                        Id = 101,
+                        RecipeId = 13,
+                        Name = "Butter",
+                        Amount = "4",
+                        Unit = "tbsp"
+                    },
+                    // Ingredients for Honey Teriyaki Salmon
+                    new Ingredient
+                    {
+                        Id = 102,
+                        RecipeId = 14,
+                        Name = "Salmon Fillets",
+                        Amount = "4",
+                        Unit = "pieces"
+                    },
+                    // Ingredients for Beef Rendang
+                    new Ingredient
+                    {
+                        Id = 103,
+                        RecipeId = 15,
+                        Name = "Beef Chuck",
+                        Amount = "2",
+                        Unit = "lbs"
+                    },
+                    // Ingredients for Chicken Balti
+                    new Ingredient
+                    {
+                        Id = 104,
+                        RecipeId = 16,
+                        Name = "Chicken Thighs",
+                        Amount = "1",
+                        Unit = "lb"
+                    },
+                    // Ingredients for Fish Pie
+                    new Ingredient
+                    {
+                        Id = 105,
+                        RecipeId = 17,
+                        Name = "White Fish",
+                        Amount = "1",
+                        Unit = "lb"
+                    },
+                    // Ingredients for Spaghetti Carbonara
+                    new Ingredient
+                    {
+                        Id = 106,
+                        RecipeId = 18,
+                        Name = "Spaghetti",
+                        Amount = "1",
+                        Unit = "lb"
+                    },
+                    // Ingredients for Ratatouille
+                    new Ingredient
+                    {
+                        Id = 107,
+                        RecipeId = 19,
+                        Name = "Eggplant",
+                        Amount = "2",
+                        Unit = "medium"
+                    },
+                    // Ingredients for Portuguese Pork Piri-Piri
+                    new Ingredient
+                    {
+                        Id = 108,
+                        RecipeId = 20,
+                        Name = "Pork Shoulder",
+                        Amount = "2",
+                        Unit = "lbs"
+                    },
+                    // Ingredients for Tandoori Chicken
+                    new Ingredient
+                    {
+                        Id = 109,
+                        RecipeId = 21,
+                        Name = "Chicken Legs",
+                        Amount = "8",
+                        Unit = "pieces"
                     }
                 );
         }

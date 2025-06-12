@@ -12,8 +12,8 @@ using RecipeShare.Data;
 namespace RecipeShare.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250609131910_AddPerformanceIndexes")]
-    partial class AddPerformanceIndexes
+    [Migration("20250612095937_AddNewRecipesAndIngredients")]
+    partial class AddNewRecipesAndIngredients
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -101,6 +101,41 @@ namespace RecipeShare.Migrations
                             Description = "Contains no nuts",
                             DisplayName = "Nut-Free",
                             Name = "NutFree"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Description = "Contains fish or shellfish",
+                            DisplayName = "Seafood",
+                            Name = "Seafood"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Description = "Sweet treats and desserts",
+                            DisplayName = "Dessert",
+                            Name = "Dessert"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Description = "Contains chicken or poultry",
+                            DisplayName = "Chicken",
+                            Name = "Chicken"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Description = "Pasta-based dishes",
+                            DisplayName = "Pasta",
+                            Name = "Pasta"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Description = "Beef-based dishes",
+                            DisplayName = "Beef",
+                            Name = "Beef"
                         });
                 });
 
@@ -435,7 +470,7 @@ namespace RecipeShare.Migrations
                             Id = 66,
                             Amount = "2",
                             Name = "Almond Flour",
-                            RecipeId = 7,
+                            RecipeId = 11,
                             Unit = "cups"
                         },
                         new
@@ -443,7 +478,7 @@ namespace RecipeShare.Migrations
                             Id = 67,
                             Amount = "3/4",
                             Name = "Cocoa Powder",
-                            RecipeId = 7,
+                            RecipeId = 11,
                             Unit = "cup"
                         },
                         new
@@ -451,7 +486,7 @@ namespace RecipeShare.Migrations
                             Id = 68,
                             Amount = "1",
                             Name = "Coconut Sugar",
-                            RecipeId = 7,
+                            RecipeId = 11,
                             Unit = "cup"
                         },
                         new
@@ -459,7 +494,7 @@ namespace RecipeShare.Migrations
                             Id = 69,
                             Amount = "1/2",
                             Name = "Coconut Oil",
-                            RecipeId = 7,
+                            RecipeId = 11,
                             Unit = "cup"
                         },
                         new
@@ -467,7 +502,7 @@ namespace RecipeShare.Migrations
                             Id = 70,
                             Amount = "1",
                             Name = "Almond Milk",
-                            RecipeId = 7,
+                            RecipeId = 11,
                             Unit = "cup"
                         },
                         new
@@ -589,6 +624,86 @@ namespace RecipeShare.Migrations
                             Name = "Herbs",
                             RecipeId = 10,
                             Unit = "cup"
+                        },
+                        new
+                        {
+                            Id = 100,
+                            Amount = "1",
+                            Name = "Whole Chicken",
+                            RecipeId = 12,
+                            Unit = "whole"
+                        },
+                        new
+                        {
+                            Id = 101,
+                            Amount = "4",
+                            Name = "Butter",
+                            RecipeId = 13,
+                            Unit = "tbsp"
+                        },
+                        new
+                        {
+                            Id = 102,
+                            Amount = "4",
+                            Name = "Salmon Fillets",
+                            RecipeId = 14,
+                            Unit = "pieces"
+                        },
+                        new
+                        {
+                            Id = 103,
+                            Amount = "2",
+                            Name = "Beef Chuck",
+                            RecipeId = 15,
+                            Unit = "lbs"
+                        },
+                        new
+                        {
+                            Id = 104,
+                            Amount = "1",
+                            Name = "Chicken Thighs",
+                            RecipeId = 16,
+                            Unit = "lb"
+                        },
+                        new
+                        {
+                            Id = 105,
+                            Amount = "1",
+                            Name = "White Fish",
+                            RecipeId = 17,
+                            Unit = "lb"
+                        },
+                        new
+                        {
+                            Id = 106,
+                            Amount = "1",
+                            Name = "Spaghetti",
+                            RecipeId = 18,
+                            Unit = "lb"
+                        },
+                        new
+                        {
+                            Id = 107,
+                            Amount = "2",
+                            Name = "Eggplant",
+                            RecipeId = 19,
+                            Unit = "medium"
+                        },
+                        new
+                        {
+                            Id = 108,
+                            Amount = "2",
+                            Name = "Pork Shoulder",
+                            RecipeId = 20,
+                            Unit = "lbs"
+                        },
+                        new
+                        {
+                            Id = 109,
+                            Amount = "8",
+                            Name = "Chicken Legs",
+                            RecipeId = 21,
+                            Unit = "pieces"
                         });
                 });
 
@@ -776,6 +891,136 @@ namespace RecipeShare.Migrations
                             PrepTimeMinutes = 10,
                             Servings = 4,
                             Title = "Low-Carb Cauliflower Rice"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CookTimeMinutes = 90,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Classic roast chicken with fresh herbs and lemon",
+                            DifficultyLevelId = 2,
+                            ImageUrl = "https://www.themealdb.com/images/media/meals/uvuyxu1503067369.jpg",
+                            Instructions = "1. Preheat oven to 375°F\n2. Season chicken with herbs and lemon\n3. Roast for 1-1.5 hours\n4. Let rest before carving",
+                            PrepTimeMinutes = 20,
+                            Servings = 6,
+                            Title = "Lemon & Herb Roast Chicken"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CookTimeMinutes = 15,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Classic French white sauce for pasta and gratins",
+                            DifficultyLevelId = 2,
+                            ImageUrl = "https://www.themealdb.com/images/media/meals/ysxwuq1487323065.jpg",
+                            Instructions = "1. Melt butter in saucepan\n2. Add flour and cook roux\n3. Gradually add milk\n4. Season and simmer until thickened",
+                            PrepTimeMinutes = 10,
+                            Servings = 4,
+                            Title = "Bechamel Sauce"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CookTimeMinutes = 15,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Sweet and savory salmon with teriyaki glaze",
+                            DifficultyLevelId = 2,
+                            ImageUrl = "https://www.themealdb.com/images/media/meals/xxyupu1468262513.jpg",
+                            Instructions = "1. Marinate salmon in teriyaki sauce\n2. Preheat oven to 400°F\n3. Bake salmon for 12-15 minutes\n4. Glaze with honey",
+                            PrepTimeMinutes = 15,
+                            Servings = 4,
+                            Title = "Honey Teriyaki Salmon"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CookTimeMinutes = 180,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Indonesian slow-cooked beef in coconut milk and spices",
+                            DifficultyLevelId = 3,
+                            ImageUrl = "https://www.themealdb.com/images/media/meals/bc8v651619789840.jpg",
+                            Instructions = "1. Brown beef in oil\n2. Add coconut milk and spices\n3. Simmer for 2-3 hours\n4. Reduce until sauce thickens",
+                            PrepTimeMinutes = 30,
+                            Servings = 6,
+                            Title = "Beef Rendang"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CookTimeMinutes = 45,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "British-Indian curry with tender chicken and aromatic spices",
+                            DifficultyLevelId = 2,
+                            ImageUrl = "https://www.themealdb.com/images/media/meals/wyxwsp1486979827.jpg",
+                            Instructions = "1. Marinate chicken in spices\n2. Cook onions and garlic\n3. Add chicken and tomatoes\n4. Simmer until tender",
+                            PrepTimeMinutes = 25,
+                            Servings = 4,
+                            Title = "Chicken Balti"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CookTimeMinutes = 40,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Traditional British fish pie with creamy sauce and mashed potato",
+                            DifficultyLevelId = 2,
+                            ImageUrl = "https://www.themealdb.com/images/media/meals/tvtxpq1511464705.jpg",
+                            Instructions = "1. Poach fish in milk\n2. Make white sauce\n3. Layer fish and sauce\n4. Top with mashed potatoes and bake",
+                            PrepTimeMinutes = 30,
+                            Servings = 6,
+                            Title = "Fish Pie"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CookTimeMinutes = 15,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Classic Italian pasta with eggs, cheese, and pancetta",
+                            DifficultyLevelId = 2,
+                            ImageUrl = "https://www.themealdb.com/images/media/meals/llcbn01574260722.jpg",
+                            Instructions = "1. Cook pasta al dente\n2. Crisp pancetta\n3. Mix eggs and cheese\n4. Combine with hot pasta",
+                            PrepTimeMinutes = 15,
+                            Servings = 4,
+                            Title = "Spaghetti Carbonara"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CookTimeMinutes = 60,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "French vegetable stew with eggplant, zucchini, and tomatoes",
+                            DifficultyLevelId = 2,
+                            ImageUrl = "https://www.themealdb.com/images/media/meals/wqurxy1511453156.jpg",
+                            Instructions = "1. Slice vegetables thinly\n2. Layer in baking dish\n3. Add herbs and olive oil\n4. Bake until tender",
+                            PrepTimeMinutes = 30,
+                            Servings = 6,
+                            Title = "Ratatouille"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            CookTimeMinutes = 45,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Spicy Portuguese pork with piri-piri chili sauce",
+                            DifficultyLevelId = 2,
+                            ImageUrl = "https://www.themealdb.com/images/media/meals/tvtxpq1511464705.jpg",
+                            Instructions = "1. Marinate pork in piri-piri sauce\n2. Grill or roast pork\n3. Baste with sauce\n4. Serve with rice",
+                            PrepTimeMinutes = 20,
+                            Servings = 4,
+                            Title = "Portuguese Pork Piri-Piri"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            CookTimeMinutes = 40,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Indian spiced chicken marinated in yogurt and spices",
+                            DifficultyLevelId = 2,
+                            ImageUrl = "https://www.themealdb.com/images/media/meals/wyxwsp1486979827.jpg",
+                            Instructions = "1. Marinate chicken in yogurt and spices\n2. Let rest for 4-6 hours\n3. Grill or bake until cooked\n4. Serve with naan bread",
+                            PrepTimeMinutes = 30,
+                            Servings = 4,
+                            Title = "Tandoori Chicken"
                         });
                 });
 
@@ -846,12 +1091,12 @@ namespace RecipeShare.Migrations
                         },
                         new
                         {
-                            RecipeId = 7,
+                            RecipeId = 11,
                             DietaryTagId = 3
                         },
                         new
                         {
-                            RecipeId = 7,
+                            RecipeId = 11,
                             DietaryTagId = 4
                         },
                         new
@@ -888,6 +1133,111 @@ namespace RecipeShare.Migrations
                         {
                             RecipeId = 10,
                             DietaryTagId = 6
+                        },
+                        new
+                        {
+                            RecipeId = 12,
+                            DietaryTagId = 10
+                        },
+                        new
+                        {
+                            RecipeId = 12,
+                            DietaryTagId = 5
+                        },
+                        new
+                        {
+                            RecipeId = 13,
+                            DietaryTagId = 1
+                        },
+                        new
+                        {
+                            RecipeId = 13,
+                            DietaryTagId = 11
+                        },
+                        new
+                        {
+                            RecipeId = 14,
+                            DietaryTagId = 8
+                        },
+                        new
+                        {
+                            RecipeId = 14,
+                            DietaryTagId = 5
+                        },
+                        new
+                        {
+                            RecipeId = 14,
+                            DietaryTagId = 6
+                        },
+                        new
+                        {
+                            RecipeId = 15,
+                            DietaryTagId = 12
+                        },
+                        new
+                        {
+                            RecipeId = 15,
+                            DietaryTagId = 5
+                        },
+                        new
+                        {
+                            RecipeId = 16,
+                            DietaryTagId = 10
+                        },
+                        new
+                        {
+                            RecipeId = 16,
+                            DietaryTagId = 5
+                        },
+                        new
+                        {
+                            RecipeId = 17,
+                            DietaryTagId = 8
+                        },
+                        new
+                        {
+                            RecipeId = 17,
+                            DietaryTagId = 5
+                        },
+                        new
+                        {
+                            RecipeId = 18,
+                            DietaryTagId = 11
+                        },
+                        new
+                        {
+                            RecipeId = 18,
+                            DietaryTagId = 5
+                        },
+                        new
+                        {
+                            RecipeId = 19,
+                            DietaryTagId = 1
+                        },
+                        new
+                        {
+                            RecipeId = 19,
+                            DietaryTagId = 2
+                        },
+                        new
+                        {
+                            RecipeId = 19,
+                            DietaryTagId = 3
+                        },
+                        new
+                        {
+                            RecipeId = 20,
+                            DietaryTagId = 5
+                        },
+                        new
+                        {
+                            RecipeId = 21,
+                            DietaryTagId = 10
+                        },
+                        new
+                        {
+                            RecipeId = 21,
+                            DietaryTagId = 5
                         });
                 });
 

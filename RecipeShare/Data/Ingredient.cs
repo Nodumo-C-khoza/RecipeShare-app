@@ -18,6 +18,7 @@ namespace RecipeShare.Data
         [MaxLength(50)]
         public string Unit { get; set; } = string.Empty;
 
+        [Required]
         public int RecipeId { get; set; }
         public Recipe Recipe { get; set; } = null!;
     }
