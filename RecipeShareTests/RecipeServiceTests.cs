@@ -226,10 +226,21 @@ namespace RecipeShareTests
             _mockRecipeRepository
                 .Setup(repo => repo.GetAvailableDifficultyLevelsAsync())
                 .ReturnsAsync(new List<DifficultyLevel> { difficultyLevel });
+
+            // **Add this block:**
             var dietaryTags = new List<DietaryTag>
-            {
-                new DietaryTag { Id = 1, Name = "Vegetarian" }
-            };
+    {
+        new DietaryTag
+        {
+            Id = 1,
+            Name = "Vegetarian",
+            DisplayName = "Vegetarian",
+            Description = "Vegetarian diet"
+        }
+    };
+            _mockRecipeRepository
+                .Setup(repo => repo.GetAvailableDietaryTagsAsync())
+                .ReturnsAsync(dietaryTags);
 
             var expectedRecipe = new Recipe
             {
@@ -240,9 +251,9 @@ namespace RecipeShareTests
                 CookTimeMinutes = 60,
                 Servings = 4,
                 DietaryTags = new List<DietaryTag>
-                {
-                    new DietaryTag { Id = 1, Name = "Vegetarian" }
-                },
+        {
+            new DietaryTag { Id = 1, Name = "Vegetarian" }
+        },
                 DifficultyLevelId = 1,
                 DifficultyLevel = difficultyLevel
             };
